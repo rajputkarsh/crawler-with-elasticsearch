@@ -6,8 +6,6 @@ import cookieParser from 'cookie-parser';
 import winston from 'winston';
 import * as expressWinston from 'express-winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
-
-import { connectToDatabase } from './src/utils/database';
 import router from './src/routes';
 import { CONFIG } from './src/constants';
 import { createServer, Server } from 'http';
@@ -65,7 +63,6 @@ const httpServer: Server = createServer(app);
 
 httpServer.listen(process.env.PORT, async () => {
   try {
-    await connectToDatabase();
     console.log(`Server started on port = ${process.env.PORT}`);
   } catch (error) {
     console.log(`Error occurred while connecting to database.`);
