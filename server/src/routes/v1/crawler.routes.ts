@@ -15,7 +15,7 @@ crawlerRouter.post(
       const result = await crawlerController.webScrape(url);
       res
         .status(HTTP_STATUS_CODE.OK)
-        .send(MESSAGES.SUCCESS.URL_CRAWLED(result));
+        .send(MESSAGES.SUCCESS.URL_CRAWL_STARTED(result));
     } catch (error: any) {
       res
         .status(error?.status || HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)

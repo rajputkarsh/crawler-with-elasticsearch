@@ -2,6 +2,7 @@ import puppeteer, { Browser, ElementHandle, Page } from 'puppeteer';
 import { IClient } from '../../interfaces/model/client';
 import { generateUUID } from '../../utils';
 import clientsDao from '../../dao/v1/clients.dao';
+import elasticSearch from '../../elastic-search';
 
 const DETAILS_CLASSNAME = '.justify-content-between';
 const CONTAINER_CLASSNAME = '.banklisting';
@@ -10,7 +11,6 @@ const COMPANY_STATUS_ID = '#COMPANY-STATUS';
 const CONTACT_DETAILS_ID = '#CONTACT-DETAILS';
 
 class CrawlerController {
-
   _getInnerHTML(
     element: ElementHandle<Element | HTMLHeadingElement> | null,
   ): Promise<string> {
@@ -86,12 +86,13 @@ class CrawlerController {
       ..._
     ] = await informationContainer.$$(DETAILS_CLASSNAME);
 
-    
     const contactDetails = await informationContainer.$(CONTACT_DETAILS_ID);
-    const companyStatusDetails = await informationContainer.$(COMPANY_STATUS_ID);
-  if (!contactDetails || !companyStatusDetails) {
-    return ''
-  }
+    const companyStatusDetails = await informationContainer.$(
+      COMPANY_STATUS_ID,
+    );
+    if (!contactDetails || !companyStatusDetails) {
+      return '';
+    }
     const [
       stateElement,
       pincodeElement,
@@ -102,11 +103,13 @@ class CrawlerController {
 
     const stateContainer = await stateElement.$('h6');
 
-      if (!stateContainer) {
-        return ''
-      }
+    if (!stateContainer) {
+      return '';
+    }
 
-    const [rocElement, statusElement] = await companyStatusDetails.$$(DETAILS_CLASSNAME);
+    const [rocElement, statusElement] = await companyStatusDetails.$$(
+      DETAILS_CLASSNAME,
+    );
 
     const name = await nameElement.$('h6');
     const registrationDate = await registrationDateElement.$('h6');
@@ -150,13 +153,15 @@ class CrawlerController {
       status: statusText,
     };
 
-    const x = await clientsDao.save(companyInfo);
-    console.log(`x - `, x)
-
+    await clientsDao.save(companyInfo);
+    await elasticSearch.saveClient(companyInfo);
     return nameText;
   }
 
-  async _handleCompanyURLS(browser: Browser, urls: Array<string>): Promise<void> {
+  async _handleCompanyURLS(
+    browser: Browser,
+    urls: Array<string>,
+  ): Promise<void> {
     const pool = [];
     const results = [];
 
@@ -172,6 +177,7 @@ class CrawlerController {
   async webScrape(url: string): Promise<{}> {
     let browser;
     try {
+
       browser = await puppeteer.launch({});
       const page = await browser.newPage();
       await page.goto(url);
@@ -182,10 +188,7 @@ class CrawlerController {
         divChildren,
       );
 
-      this._handleCompanyURLS(
-        browser,
-        companyURLs,
-      );
+      this._handleCompanyURLS(browser, companyURLs);
 
       return {};
     } catch (error) {
