@@ -9,6 +9,7 @@ generator client {
 
 model Clients {
   id                  Int      @id @default(autoincrement())
+  uuid                String @unique
   name                String
   email               String @unique
   registrationDate    String
