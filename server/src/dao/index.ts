@@ -1,1 +1,1 @@
-export { default as clientsController } from './v1/clients.dao';
+export { default as clientsDao } from './v1/clients.dao';

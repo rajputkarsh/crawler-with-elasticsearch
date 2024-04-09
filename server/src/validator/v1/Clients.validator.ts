@@ -24,6 +24,7 @@ class ClientsValidator extends BaseValidator {
 
   update = async (req: Request, res: Response, next: NextFunction) => {
     const validationSchema = Joi.object({
+      uuid: Joi.string().optional(),
       name: Joi.string().required(),
       email: Joi.string().email().required(),
       registrationDate: Joi.string().isoDate().required(),
@@ -40,6 +41,16 @@ class ClientsValidator extends BaseValidator {
 
     this.validateBody(validationSchema, req, res, next);
   };
+
+  list = async (req: Request, res: Response, next: NextFunction) => {
+    const validationSchema = Joi.object({
+      page: Joi.number().min(1).optional(),
+      limit: Joi.number().min(1).optional(),
+    });
+
+    this.validateQuery(validationSchema, req, res, next);
+  };
+
   search = async (req: Request, res: Response, next: NextFunction) => {
     const validationSchema = Joi.object({
       q: Joi.string().min(1).required(),

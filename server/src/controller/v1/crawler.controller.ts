@@ -1,7 +1,7 @@
 import puppeteer, { Browser, ElementHandle, Page } from 'puppeteer';
 import { IClient } from '../../interfaces/model/client';
 import { generateUUID } from '../../utils';
-import clientsDao from '../../dao/v1/clients.dao';
+import { clientsDao } from '../../dao/';
 import elasticSearch from '../../elastic-search';
 
 const DETAILS_CLASSNAME = '.justify-content-between';
@@ -177,7 +177,6 @@ class CrawlerController {
   async webScrape(url: string): Promise<{}> {
     let browser;
     try {
-
       browser = await puppeteer.launch({});
       const page = await browser.newPage();
       await page.goto(url);
@@ -192,7 +191,6 @@ class CrawlerController {
 
       return {};
     } catch (error) {
-      console.log(`error -- `, error);
       throw error;
     }
   }

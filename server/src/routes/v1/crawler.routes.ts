@@ -17,6 +17,7 @@ crawlerRouter.post(
         .status(HTTP_STATUS_CODE.OK)
         .send(MESSAGES.SUCCESS.URL_CRAWL_STARTED(result));
     } catch (error: any) {
+      console.log(`error -- `, error);
       res
         .status(error?.status || HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)
         .json(error);

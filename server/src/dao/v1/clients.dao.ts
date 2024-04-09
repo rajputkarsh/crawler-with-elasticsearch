@@ -2,7 +2,7 @@ import prisma from '../../utils/database';
 import { IClient } from '../../interfaces/model/client';
 
 class ClientsDao {
-  list(page: number = 1, limit: 10) {
+  list(page: number = 1, limit: number = 25) {
     return prisma.clients.findMany({
       skip: (page - 1) * limit,
       take: limit,
