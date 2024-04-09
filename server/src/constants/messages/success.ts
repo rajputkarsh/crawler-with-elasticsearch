@@ -14,6 +14,13 @@ export default {
     data: data,
   }),
 
+  CLIENTS_SEARCH_LIST: (data: Object) => ({
+    STATUS: HTTP_STATUS_CODE.OK,
+    type: 'CLIENTS_SEARCH_LIST',
+    message: 'Clients Search List Fetched',
+    data: data,
+  }),
+
   CLIENT_INFORMATION: (data: Object) => ({
     STATUS: HTTP_STATUS_CODE.OK,
     type: 'CLIENT_INFORMATION',

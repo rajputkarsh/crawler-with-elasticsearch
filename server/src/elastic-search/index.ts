@@ -38,7 +38,7 @@ class ElasticSearch {
     }
   }
 
-  async searchClients(term: string) {
+  async searchClients(term: string, page: number=1, limit:number=25) {
     try {
       this.#client.indices.putSettings({
         index: CLIENT_INDEX_NAME,
@@ -74,7 +74,10 @@ class ElasticSearch {
       });
 
       const results = response.hits.hits;
-      return results
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+
+      return results.slice(startIndex, endIndex);
     }  catch(error) {
       throw error;
     }   

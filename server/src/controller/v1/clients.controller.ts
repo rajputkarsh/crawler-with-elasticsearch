@@ -1,4 +1,5 @@
 import {clientsDao} from "../../dao";
+import elasticSearch from "../../elastic-search";
 import { IClient } from "../../interfaces/model/client";
 import { generateUUID } from "../../utils";
 
@@ -6,6 +7,14 @@ class ClientsController {
   list(page: number, limit: number) {
     try {
       return clientsDao.list(page, limit);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  search(q: string, page: number, limit: number) {
+    try {
+      return elasticSearch.searchClients(q, page, limit)
     } catch (error) {
       throw error;
     }
@@ -43,7 +52,7 @@ class ClientsController {
     } catch (error) {
       throw error;
     }
-  };
+  }
 }
 
 export default new ClientsController();

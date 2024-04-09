@@ -33,6 +33,32 @@ clientsRouter.get(
 );
 
 clientsRouter.get(
+  '/',
+  clientsValidator.search,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { q, page, limit } = req.query;
+      const pageNumber = page ? parseInt(page as string) : 1;
+      const pageSize = limit ? parseInt(limit as string) : 25;
+      const result = await clientsController.search(q as string, pageNumber, pageSize);
+      res.status(HTTP_STATUS_CODE.OK).send(
+        MESSAGES.SUCCESS.CLIENTS_SEARCH_LIST({
+          page: pageNumber,
+          limit: pageSize,
+          data: result,
+        }),
+      );
+      res.send;
+    } catch (error: any) {
+      console.log(`error -- `, error);
+      res
+        .status(error?.status || HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)
+        .json(error);
+    }
+  },
+);
+
+clientsRouter.get(
   '/:uuid',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -104,8 +130,6 @@ clientsRouter.post(
     }
   },
 );
-
-
 
 clientsRouter.delete(
   '/:uuid',

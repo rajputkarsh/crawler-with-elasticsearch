@@ -54,6 +54,8 @@ class ClientsValidator extends BaseValidator {
   search = async (req: Request, res: Response, next: NextFunction) => {
     const validationSchema = Joi.object({
       q: Joi.string().min(1).required(),
+      page: Joi.number().min(1).optional(),
+      limit: Joi.number().min(1).optional(),
     });
 
     this.validateQuery(validationSchema, req, res, next);
