@@ -1,6 +1,7 @@
 import elasticsearch, { Client } from '@elastic/elasticsearch';
 import { IClient } from '../interfaces/model/client';
 
+const CLIENT_INDEX_NAME = 'client-data';
 class ElasticSearch {
   #client: Client;
 
@@ -20,7 +21,7 @@ class ElasticSearch {
 
   deleteClientIndex() {
     try {
-      return this.#client.indices.delete({ index: 'client-data' });
+      return this.#client.indices.delete({ index: CLIENT_INDEX_NAME });
     } catch(error) {
       throw error;
     }
@@ -29,12 +30,54 @@ class ElasticSearch {
   saveClient(data: IClient) {
     try {
       return this.#client.index({
-        index: 'client-data',
-        body: data
+        index: CLIENT_INDEX_NAME,
+        body: data,
       });
     } catch (error) {
       throw error;
     }
+  }
+
+  async searchClients(term: string) {
+    try {
+      this.#client.indices.putSettings({
+        index: CLIENT_INDEX_NAME,
+        body: {
+          analysis: {
+            normalizer: {
+              lowerCaseNormalizer: {
+                type: 'custom',
+                filter: ['lowercase']
+              }
+            }
+          }
+        }
+      });
+
+      const response = await this.#client.search({
+        index: CLIENT_INDEX_NAME,
+        body: {
+          query: {
+            multi_match: {
+              query: term,
+              fields: [
+                'uuid.lowerCaseNormalizer',
+                'name.lowerCaseNormalizer',
+                'cin.lowerCaseNormalizer',
+                'email.lowerCaseNormalizer',
+              ],
+              operator: 'or',
+              type: 'phrase_prefix',
+            },
+          },
+        },
+      });
+
+      const results = response.hits.hits;
+      return results
+    }  catch(error) {
+      throw error;
+    }   
   }
 }
 
