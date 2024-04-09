@@ -9,11 +9,13 @@ const crawlerRouter = Router();
 crawlerRouter.post(
   '/',
   crawlerValidator.crawl,
-  (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { url } = req.body as ICrawlerRequest;
-      const result = crawlerController.webScrape(url);
-      res.status(HTTP_STATUS_CODE.OK).send(MESSAGES.SUCCESS)
+      const result = await crawlerController.webScrape(url);
+      res
+        .status(HTTP_STATUS_CODE.OK)
+        .send(MESSAGES.SUCCESS.URL_CRAWLED(result));
     } catch (error: any) {
       res
         .status(error?.status || HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)

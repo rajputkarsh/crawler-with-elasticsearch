@@ -65,7 +65,6 @@ httpServer.listen(process.env.PORT, async () => {
   try {
     console.log(`Server started on port = ${process.env.PORT}`);
   } catch (error) {
-    console.log(`Error occurred while connecting to database.`);
     console.trace(error);
   }
 });

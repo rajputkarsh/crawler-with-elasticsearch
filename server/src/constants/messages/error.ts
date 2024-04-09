@@ -1,4 +1,4 @@
-import { HTTP_STATUS_CODE } from '..';
+import HTTP_STATUS_CODE from '../httpCodes';
 
 export default {
   BAD_REQUEST: (data: string) => ({
