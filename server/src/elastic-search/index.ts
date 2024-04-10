@@ -95,44 +95,31 @@ class ElasticSearch {
 
   async searchClients(term: string, page: number = 1, limit: number = 25) {
     try {
-      this.#client.indices.putSettings({
-        index: CLIENT_INDEX_NAME,
-        body: {
-          analysis: {
-            normalizer: {
-              lowerCaseNormalizer: {
-                type: 'custom',
-                filter: ['lowercase'],
-              },
-            },
-          },
-        },
-      });
-
       const response = await this.#client.search({
         index: CLIENT_INDEX_NAME,
         body: {
           query: {
             multi_match: {
               query: term,
-              fields: [
-                'uuid.lowerCaseNormalizer',
-                'name.lowerCaseNormalizer',
-                'cin.lowerCaseNormalizer',
-                'email.lowerCaseNormalizer',
-              ],
+              fields: ['uuid', 'name', 'cin', 'email'],
+              fuzziness: 'auto',
               operator: 'or',
-              type: 'phrase_prefix',
             },
           },
         },
       });
 
+      console.log(`term -- `, term);
+      console.log(`response -- `, response);
+
       const results = response.hits.hits;
       const startIndex = (page - 1) * limit;
       const endIndex = startIndex + limit;
 
-      return results.slice(startIndex, endIndex);
+      const count = results.length;
+      const slicedResults = results.slice(startIndex, endIndex);
+
+      return { count, result: slicedResults.map((s) => s._source) };
     } catch (error) {
       throw error;
     }

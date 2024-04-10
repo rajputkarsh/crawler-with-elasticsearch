@@ -11,41 +11,30 @@ clientsRouter.get(
   clientsValidator.list,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { page, limit } = req.query;
+      const { q, page, limit } = req.query;
       const pageNumber = page ? parseInt(page as string) : 1;
       const pageSize = limit ? parseInt(limit as string) : 25;
-      const {count, result} = await clientsController.list(pageNumber, pageSize);
+
+      let result, count;
+      if (q) {
+        const { count: queryCount, result: queryData } =
+          await clientsController.search(q as string, pageNumber, pageSize);
+          
+        count = queryCount;
+        result = queryData;
+      } else {
+        const { count: queryCount, result: queryData } =
+          await clientsController.list(pageNumber, pageSize);
+
+        count = queryCount;
+        result = queryData;
+      }
+
       res.status(HTTP_STATUS_CODE.OK).send(
         MESSAGES.SUCCESS.CLIENTS_LIST({
           page: pageNumber,
           limit: pageSize,
           count: count,
-          data: result,
-        }),
-      );
-      res.send;
-    } catch (error: any) {
-      console.log(`error -- `, error);
-      res
-        .status(error?.status || HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .json(error);
-    }
-  },
-);
-
-clientsRouter.get(
-  '/',
-  clientsValidator.search,
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { q, page, limit } = req.query;
-      const pageNumber = page ? parseInt(page as string) : 1;
-      const pageSize = limit ? parseInt(limit as string) : 25;
-      const result = await clientsController.search(q as string, pageNumber, pageSize);
-      res.status(HTTP_STATUS_CODE.OK).send(
-        MESSAGES.SUCCESS.CLIENTS_SEARCH_LIST({
-          page: pageNumber,
-          limit: pageSize,
           data: result,
         }),
       );
@@ -113,7 +102,9 @@ clientsRouter.post(
     try {
       const { uuid } = req.params;
       if (!uuid) {
-        res.status(HTTP_STATUS_CODE.BAD_REQUEST).json(MESSAGES.ERROR.BAD_REQUEST);
+        res
+          .status(HTTP_STATUS_CODE.BAD_REQUEST)
+          .json(MESSAGES.ERROR.BAD_REQUEST);
         return;
       }
 

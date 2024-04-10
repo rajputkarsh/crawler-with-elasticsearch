@@ -6,6 +6,8 @@ import {
   getClients,
   getPageLimit,
   getPageNumber,
+  getSearchClients,
+  getSearchKey,
   getTotalCount,
   incrementPageNumber,
 } from "../../redux/store/clients.slice";
@@ -13,6 +15,7 @@ import Loader from "../../components/Loader";
 import ClientDetails from "../../components/ClientDetails";
 import Dialog from "../../components/Dialog";
 import AddClient from "../../components/AddClient";
+import Search from "../../components/Search";
 
 function ClientList() {
   const dispatch = useDispatch<AppStore>();
@@ -20,6 +23,10 @@ function ClientList() {
   const [isPending, startTransition] = useTransition();
   const [showDialog, setShowDialog] = useState<boolean>(false);
 
+  const searchKey = useSelector<AppState, string>(getSearchKey);
+  const searchClientsList = useSelector<AppState, Array<{ [key: string]: string }>>(
+    getSearchClients
+  );
   const pageNumber = useSelector<AppState, number>(getPageNumber);
   const totalCount = useSelector<AppState, number>(getTotalCount);
   const pageLimit = useSelector<AppState, number>(getPageLimit);
@@ -47,7 +54,7 @@ function ClientList() {
     fetchClients();
   }, [pageNumber]);
 
-  
+  const list = searchKey ? searchClientsList : clientsList;
 
   return (
     <div className="mx-0 w-100 vh-100 my-2 container">
@@ -64,14 +71,17 @@ function ClientList() {
           Add New Client
         </button>
       </div>
+      <div className="row mt-2 mb-2">
+        <Search />
+      </div>
       <div className="row my-2 gy-4 pb-4">
-        {clientsList.map((client: { [key: string]: string }) => (
+        {list.map((client: { [key: string]: string }) => (
           <div className="fluid col-xs-6 col-md-4" key={client.uuid}>
             <ClientDetails client={client} />
           </div>
         ))}
       </div>
-      {clientsList.length < totalCount && (
+      {!searchKey && list.length < totalCount && (
         <div className="row py-4 justify-content-center">
           <button onClick={() => {handleLoadMore();}} className="w-auto btn btn-warning px-4"> Load More</button>
         </div>

@@ -10,5 +10,7 @@ export interface IClientSliceData {
   limit: number;
   count: number;
   data: Array<{ [key: string]: any }>;
+  searchKey: string;
+  searchResults: Array<{ [key: string]: any }>;
 }
 export interface IClientSlice extends IBaseSlice<IClientSliceData> {}

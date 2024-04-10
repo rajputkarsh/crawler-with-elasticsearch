@@ -97,12 +97,32 @@ export const deleteClient = createAsyncThunk(
   }
 );
 
+
+
+export const searchClients = createAsyncThunk(
+  "client/search",
+  (data: { term: string }, thunk) => {
+    const apiData = getApiConfig("client", "search");
+
+    return fetchData({
+      ...apiData,
+      data: {q: data.term},
+      headers: null,
+      timeout: DEFAULT_API_TIMEOUT,
+    }).catch((error) => {
+      throw error;
+    });
+  }
+);
+
 const initialData: IClientSlice = {
   data: {
     page: 1,
     limit: 25,
     count: 0,
     data: [],
+    searchKey: "",
+    searchResults: [],
   },
   status: "idle",
   error: null,
@@ -114,6 +134,11 @@ export const clientSlice = createSlice({
   reducers: {
     incrementPageNumber: (state) => {
       state.data.page = state.data.page + 1
+      return state;
+    },
+    resetSearch: (state) => {
+      state.data.searchKey = "";
+      state.data.searchResults = [];
       return state;
     }
   },
@@ -172,6 +197,22 @@ export const clientSlice = createSlice({
       state.data.data = clients;
       state.error = null;
     });
+    builders.addCase(searchClients.pending, (state, action) => {
+      state.status = "loading";
+    });
+    builders.addCase(searchClients.rejected, (state, action) => {
+      state.status = "error";
+      state.error = action.error;
+    });
+    builders.addCase(searchClients.fulfilled, (state, action: any) => {
+      state.status = "succeeded";
+      const { page, limit, data, count } = action?.payload?.data?.data || {};
+      if (data && Array.isArray(data)) {
+        state.data.searchKey = action?.meta?.arg?.term || ""; 
+        state.data.searchResults = [...data];
+      }
+      state.error = null;
+    });
   },
 });
 
@@ -216,6 +257,22 @@ export const getClientById = (uuid: string | undefined) =>
       (clientState?.data?.data || []).find((client) => client?.uuid === uuid) || {}
   );
 
-  export const { incrementPageNumber } = clientSlice.actions;
+export const getSearchClients = createSelector<
+  [(state: AppState) => IClientSlice],
+  Array<{ [key: string]: any }>
+>(
+  [selectClientRootState],
+  (clientState: IClientSlice) => clientState?.data?.searchResults || []
+);
+
+export const getSearchKey = createSelector<
+  [(state: AppState) => IClientSlice],
+  string
+>(
+  [selectClientRootState],
+  (clientState: IClientSlice) => clientState?.data?.searchKey || ""
+);
+
+export const { incrementPageNumber, resetSearch } = clientSlice.actions;
 
 export default clientSlice.reducer;

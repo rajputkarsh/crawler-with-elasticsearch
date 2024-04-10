@@ -31,8 +31,11 @@ const apiConfig: ApiConfig = {
       method: "DELETE",
       path: BACKEND_ROUTES.client,
     },
+    search: {
+      method: "GET",
+      path: BACKEND_ROUTES.client,
+    },
   },
-
 } as const;
 
 const apiTypes = Object.keys(apiConfig);
