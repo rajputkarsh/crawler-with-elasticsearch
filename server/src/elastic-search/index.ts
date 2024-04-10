@@ -99,11 +99,37 @@ class ElasticSearch {
         index: CLIENT_INDEX_NAME,
         body: {
           query: {
-            multi_match: {
-              query: term,
-              fields: ['uuid', 'name', 'cin', 'email'],
-              fuzziness: 'auto',
-              operator: 'or',
+            bool: {
+              should: [
+                {
+                  regexp: {
+                    name: {
+                      value: `.*${term}.*`,
+                    },
+                  },
+                },
+                {
+                  regexp: {
+                    email: {
+                      value: `.*${term}.*`,
+                    },
+                  },
+                },
+                {
+                  regexp: {
+                    uuid: {
+                      value: `.*${term}.*`,
+                    },
+                  },
+                },
+                {
+                  regexp: {
+                    cin: {
+                      value: `.*${term}.*`,
+                    },
+                  },
+                },
+              ],
             },
           },
         },
