@@ -1,41 +1,74 @@
 import { useForm } from "react-hook-form";
 import { IClient } from "../../interfaces/Client";
 import { DEFAULT_CLIENT_FIELDS } from "../../constants/client";
-import { useDispatch } from "react-redux";
-import { AppStore } from "../../redux/store";
-import { useTransition } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppState, AppStore } from "../../redux/store";
+import { useEffect, useTransition } from "react";
 import Loader from "../Loader";
-import { addClient } from "../../redux/store/clients.slice";
+import { addClient, getClientById, updateClient } from "../../redux/store/clients.slice";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
-function AddClient() {
+interface AddClientProps {
+  id?: string;
+}
+
+function AddClient({ id }: AddClientProps) {
   const dispatch = useDispatch<AppStore>();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<IClient>({
     defaultValues: DEFAULT_CLIENT_FIELDS,
   });
 
+  const clientInfo = useSelector<AppState, { [key: string]: string }>(
+    getClientById(id)
+  );
+
+  useEffect(() => {
+    if (id) {
+      reset(clientInfo);
+    }
+  }, []);
+
   const [isPending, startTransition] = useTransition();
 
   const onSubmit = (data: IClient) => {
     startTransition(() => {
-      dispatch(addClient({ ...data, pin: data.pin.toString() }))
-        .then((resp: any) => {
-          if (resp?.payload?.status == 200) {
-            toast("Client Saved");
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000)
-          } else {
+      if (id) {
+        dispatch(updateClient({ ...data, pin: data.pin.toString(), id }))
+          .then((resp: any) => {
+            if (resp?.payload?.status == 200) {
+              toast("Client Updated");
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            } else {
+              toast("Something went wrong");
+            }
+          })
+          .catch((error) => {
             toast("Something went wrong");
-          }
-        })
-        .catch((error) => {
-          toast("Something went wrong");
-        });
+          });
+      } else {
+        dispatch(addClient({ ...data, pin: data.pin.toString() }))
+          .then((resp: any) => {
+            if (resp?.payload?.status == 200) {
+              toast("Client Saved");
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            } else {
+              toast("Something went wrong");
+            }
+          })
+          .catch((error) => {
+            toast("Something went wrong");
+          });
+      }
     });
   };
 
@@ -65,9 +98,10 @@ function AddClient() {
           })}
         />
       </div>
-      <div className="form-group my-2">
+      <div className="form-group my-2 d-none">
         <input
-          type="date"
+          type="text"
+          value={dayjs().format("YYYY-MM-DD")}
           className={`form-control ${
             errors?.name ? "border border-danger border-2" : ""
           }`}

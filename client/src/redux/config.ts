@@ -24,7 +24,7 @@ const apiConfig: ApiConfig = {
       path: BACKEND_ROUTES.client,
     },
     update: {
-      method: "PATCH",
+      method: "POST",
       path: BACKEND_ROUTES.client,
     },
     delete: {

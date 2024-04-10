@@ -27,7 +27,7 @@ class ClientsValidator extends BaseValidator {
       uuid: Joi.string().optional(),
       name: Joi.string().required(),
       email: Joi.string().email().required(),
-      registrationDate: Joi.string().isoDate().required(),
+      registrationDate: Joi.string().required(),
       companyCategory: Joi.string().required(),
       companySubCategory: Joi.string().required(),
       companyClass: Joi.string().required(),

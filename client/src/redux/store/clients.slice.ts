@@ -196,7 +196,7 @@ export const getClients = createSelector<
   (clientState: IClientSlice) => clientState?.data?.data || []
 );
 
-export const getClientById = (uuid: string) =>
+export const getClientById = (uuid: string | undefined) =>
   createSelector<[(state: AppState) => IClientSlice], { [key: string]: any }>(
     [selectClientRootState],
     (clientState: IClientSlice) =>
