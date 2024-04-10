@@ -2,11 +2,18 @@ import prisma from '../../utils/database';
 import { IClient } from '../../interfaces/model/client';
 
 class ClientsDao {
-  list(page: number = 1, limit: number = 25) {
-    return prisma.clients.findMany({
+  async list(page: number = 1, limit: number = 25) {
+    try {
+    const count = await prisma.clients.count();
+    const result = await prisma.clients.findMany({
       skip: (page - 1) * limit,
       take: limit,
     });
+
+    return { count, result };
+    } catch(error) {
+      throw error;
+    }
   }
 
   findOne(uuid: string) {

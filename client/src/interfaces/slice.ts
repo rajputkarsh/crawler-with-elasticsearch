@@ -8,6 +8,7 @@ interface IBaseSlice<T> {
 export interface IClientSliceData {
   page: number;
   limit: number;
+  count: number;
   data: Array<{ [key: string]: any }>;
 }
 export interface IClientSlice extends IBaseSlice<IClientSliceData> {}

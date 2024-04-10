@@ -27,7 +27,7 @@ const persistedReducer = persistReducer(
 
 const store = configureStore({
   reducer: persistedReducer,
-  devTools: import.meta.env.SERVER_MODE === "local",
+  devTools: import.meta.env.MODE === "development",
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

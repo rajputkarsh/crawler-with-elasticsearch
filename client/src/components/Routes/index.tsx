@@ -5,13 +5,15 @@ import NotFound from "../../containers/NotFound";
 
 function index() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<ClientList />} path="/" />
-        <Route element={<ClientInfo />} path="/:id" />
-        <Route element={<NotFound />} path="*" />
-      </Routes>
-    </BrowserRouter>
+    <div className="bg-light px-2">
+      <BrowserRouter>
+        <Routes>
+          <Route element={<ClientList />} path="/" />
+          <Route element={<ClientInfo />} path="/:id" />
+          <Route element={<NotFound />} path="*" />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 

@@ -14,11 +14,12 @@ clientsRouter.get(
       const { page, limit } = req.query;
       const pageNumber = page ? parseInt(page as string) : 1;
       const pageSize = limit ? parseInt(limit as string) : 25;
-      const result = await clientsController.list(pageNumber, pageSize);
+      const {count, result} = await clientsController.list(pageNumber, pageSize);
       res.status(HTTP_STATUS_CODE.OK).send(
         MESSAGES.SUCCESS.CLIENTS_LIST({
           page: pageNumber,
           limit: pageSize,
+          count: count,
           data: result,
         }),
       );

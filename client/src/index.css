@@ -3,3 +3,28 @@ html, body {
   padding: 0;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  div {
+    width: 300px;
+    height: 300px;
+    top: calc(50% - 150px);
+    left: calc(50% - 150px);
+    position: fixed;
+  }
+}
+
+.container {
+  max-width: 100vw !important;
+}

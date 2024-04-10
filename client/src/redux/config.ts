@@ -10,7 +10,7 @@ type ApiConfig = {
 };
 
 const BACKEND_ROUTES = {
-  client: `${import.meta.env.API_BASE_URL}/api/client`,
+  client: `${import.meta.env.VITE_APP_API_BASE_URL}/api/clients`,
 };
 
 const apiConfig: ApiConfig = {

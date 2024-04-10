@@ -102,6 +102,7 @@ const initialData: IClientSlice = {
   data: {
     page: 1,
     limit: 25,
+    count: 0,
     data: [],
   },
   status: "idle",
@@ -128,12 +129,15 @@ export const clientSlice = createSlice({
     });
     builders.addCase(fetchClientsList.fulfilled, (state, action: any) => {
       state.status = "succeeded";
-      const { page, limit, data } = action?.payload?.data?.data || {};
+      const { page, limit, data, count } = action?.payload?.data?.data || {};
       if (page) {
         state.data.page = page;
       }
       if (limit) {
         state.data.limit = limit;
+      }
+      if (count) {
+        state.data.count = count;
       }
       if (data && Array.isArray(data)) {
         state.data.data = [...state.data.data, ...data];
@@ -170,6 +174,22 @@ export const clientSlice = createSlice({
 });
 
 const selectClientRootState = (state: AppState): IClientSlice => state.clients;
+
+export const getPageNumber = createSelector<
+  [(state: AppState) => IClientSlice],
+  number
+>(
+  [selectClientRootState],
+  (clientState: IClientSlice) => clientState?.data?.page || 1
+);
+
+export const getPageLimit = createSelector<
+  [(state: AppState) => IClientSlice],
+  number
+>(
+  [selectClientRootState],
+  (clientState: IClientSlice) => clientState?.data?.limit || 25
+);
 
 export const getClients = createSelector<
   [(state: AppState) => IClientSlice],
