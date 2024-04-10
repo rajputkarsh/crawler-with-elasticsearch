@@ -1,17 +1,10 @@
-
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface ClientDetailsProps {
   client: { [key: string]: string };
 }
 
 function ClientDetails({ client }: ClientDetailsProps) {
-  const navigate = useNavigate();
-
-  const handleViewMore = (uuid: string) => {
-     navigate(`/${uuid}`, {});
-  }
-
   const renderField = (text: string, value: string) => {
     return (
       <div>
@@ -19,7 +12,7 @@ function ClientDetails({ client }: ClientDetailsProps) {
         <span className="fw-semibold">{value}</span>
       </div>
     );
-  }
+  };
 
   return (
     <div className="container px-2 py-2 bg-light border border-2 rounded clientdetails">
@@ -36,9 +29,13 @@ function ClientDetails({ client }: ClientDetailsProps) {
       {renderField("Status", client.status)}
       <div className="mt-2"></div>
       <div className="row justify-content-end">
-        <button className="w-auto btn btn-secondary mx-4" onClick={() => {
-          handleViewMore(client.uuid);
-        }}>View More</button>
+        <Link
+          to={`/${client.uuid}`}
+          target="_blank"
+          className="w-auto btn btn-secondary mx-4"
+        >
+          View More
+        </Link>
       </div>
     </div>
   );

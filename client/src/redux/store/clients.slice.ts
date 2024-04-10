@@ -12,7 +12,7 @@ import { IClientSlice, IClientSliceData } from "../../interfaces/slice";
 
 export const fetchClientsList = createAsyncThunk(
   "client/list",
-  (data: { page: number, limit: number }, thunk) => {
+  (data: { page: number; limit: number }, thunk) => {
     const apiData = getApiConfig("client", "fetch");
 
     return fetchData({
@@ -28,10 +28,9 @@ export const fetchClientsList = createAsyncThunk(
 
 export const fetchClientById = createAsyncThunk(
   "client/list-by-id",
-  (data: { id: string }, thunk) => {
+  ({ id }: { id: string }, thunk) => {
     const apiData = getApiConfig("client", "fetch");
-
-    const path = `${apiData["path"]}/${data.id}`;
+    const path = `${apiData["path"]}/${id}`;
 
     return fetchData({
       ...apiData,
@@ -158,9 +157,7 @@ export const clientSlice = createSlice({
         JSON.stringify(state.data.data || [])
       );
 
-      let index = clients.findIndex(
-        (e) => e?.uuid === newClient?.uuid
-      );
+      let index = clients.findIndex((e) => e?.uuid === newClient?.uuid);
 
       if (index >= 0) {
         clients[index] = newClient;
@@ -198,5 +195,12 @@ export const getClients = createSelector<
   [selectClientRootState],
   (clientState: IClientSlice) => clientState?.data?.data || []
 );
+
+export const getClientById = (uuid: string) =>
+  createSelector<[(state: AppState) => IClientSlice], { [key: string]: any }>(
+    [selectClientRootState],
+    (clientState: IClientSlice) =>
+      (clientState?.data?.data || []).find((client) => client?.uuid === uuid) || {}
+  );
 
 export default clientSlice.reducer;

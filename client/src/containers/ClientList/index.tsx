@@ -32,7 +32,6 @@ function ClientList() {
   
 
   return (
-    <div>
       <div className="mx-0 w-100 vh-100 my-2 container">
         <div className="row">
           <h1 className="text-center">Web Scraper</h1>
@@ -44,9 +43,8 @@ function ClientList() {
             </div>
           ))}
         </div>
+        {isPending && <Loader />}
       </div>
-      {isPending && <Loader />}
-    </div>
   );
 }
 
