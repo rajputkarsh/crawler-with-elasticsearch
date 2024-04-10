@@ -12,12 +12,12 @@ import { IClientSlice, IClientSliceData } from "../../interfaces/slice";
 
 export const fetchClientsList = createAsyncThunk(
   "client/list",
-  (data: { [key: string]: any }, thunk) => {
+  (data: { page: number, limit: number }, thunk) => {
     const apiData = getApiConfig("client", "fetch");
 
     return fetchData({
       ...apiData,
-      data: {},
+      data,
       headers: null,
       timeout: DEFAULT_API_TIMEOUT,
     }).catch((error) => {
