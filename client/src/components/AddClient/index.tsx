@@ -3,9 +3,13 @@ import { IClient } from "../../interfaces/Client";
 import { DEFAULT_CLIENT_FIELDS } from "../../constants/client";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState, AppStore } from "../../redux/store";
-import { useEffect, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Loader from "../Loader";
-import { addClient, getClientById, updateClient } from "../../redux/store/clients.slice";
+import {
+  addClient,
+  getClientById,
+  updateClient,
+} from "../../redux/store/clients.slice";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 
@@ -15,6 +19,7 @@ interface AddClientProps {
 
 function AddClient({ id }: AddClientProps) {
   const dispatch = useDispatch<AppStore>();
+  const [isDisabled, setDisabled] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -37,6 +42,7 @@ function AddClient({ id }: AddClientProps) {
   const [isPending, startTransition] = useTransition();
 
   const onSubmit = (data: IClient) => {
+    setDisabled(true);
     startTransition(() => {
       if (id) {
         dispatch(updateClient({ ...data, pin: data.pin.toString(), id }))
@@ -232,7 +238,7 @@ function AddClient({ id }: AddClientProps) {
         />
       </div>
 
-      <button type="submit" className="btn btn-primary">
+      <button disabled={isDisabled} type="submit" className="btn btn-primary">
         Submit
       </button>
       {isPending && <Loader />}

@@ -22,7 +22,7 @@ class ElasticSearch {
   deleteClientIndex() {
     try {
       return this.#client.indices.delete({ index: CLIENT_INDEX_NAME });
-    } catch(error) {
+    } catch (error) {
       throw error;
     }
   }
@@ -38,7 +38,62 @@ class ElasticSearch {
     }
   }
 
-  async searchClients(term: string, page: number=1, limit:number=25) {
+  async updateClient(id: string, data: IClient) {
+    try {
+      const response = await this.#client.search({
+        index: CLIENT_INDEX_NAME,
+        body: {
+          query: {
+            match: {
+              uuid: id,
+            },
+          },
+        },
+      });
+
+      const hits = response.hits.hits;
+
+      if (!hits.length) return;
+
+      return this.#client.update({
+        index: CLIENT_INDEX_NAME,
+        id: hits[0]._id,
+        body: {
+          doc: data,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteClient(id: string) {
+    try {
+      const response = await this.#client.search({
+        index: CLIENT_INDEX_NAME,
+        body: {
+          query: {
+            match: {
+              uuid: id,
+            },
+          },
+        },
+      });
+
+      const hits = response.hits.hits;
+
+      if (!hits.length) return;
+
+      return this.#client.delete({
+        index: CLIENT_INDEX_NAME,
+        id: hits[0]._id,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async searchClients(term: string, page: number = 1, limit: number = 25) {
     try {
       this.#client.indices.putSettings({
         index: CLIENT_INDEX_NAME,
@@ -47,11 +102,11 @@ class ElasticSearch {
             normalizer: {
               lowerCaseNormalizer: {
                 type: 'custom',
-                filter: ['lowercase']
-              }
-            }
-          }
-        }
+                filter: ['lowercase'],
+              },
+            },
+          },
+        },
       });
 
       const response = await this.#client.search({
@@ -78,9 +133,9 @@ class ElasticSearch {
       const endIndex = startIndex + limit;
 
       return results.slice(startIndex, endIndex);
-    }  catch(error) {
+    } catch (error) {
       throw error;
-    }   
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import Loader from "../Loader";
 import { useDispatch } from "react-redux";
 import { AppStore } from "../../redux/store";
@@ -12,8 +12,10 @@ interface DeleteClientProps {
 
 function DeleteClient({ id, handleClose }: DeleteClientProps) {
   const dispatch = useDispatch<AppStore>();
+  const [isDisabled, setDisabled] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
   const handleDelete = () => {
+    setDisabled(true);
     startTransition(() => {
       dispatch(deleteClient({ id }))
         .then((resp: any) => {
@@ -40,6 +42,7 @@ function DeleteClient({ id, handleClose }: DeleteClientProps) {
       </div>
       <div className="row mt-4 w-100 justify-content-around gx-4">
         <button
+          disabled={isDisabled}
           onClick={() => {
             handleDelete();
           }}
@@ -48,6 +51,7 @@ function DeleteClient({ id, handleClose }: DeleteClientProps) {
           Delete
         </button>
         <button
+          disabled={isDisabled}
           onClick={() => {
             handleClose();
           }}
