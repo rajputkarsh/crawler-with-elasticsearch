@@ -7,7 +7,6 @@ import {
   getPageLimit,
   getPageNumber,
 } from "../../redux/store/clients.slice";
-import { Container, Row, Col } from "react-bootstrap";
 import Loader from "../../components/Loader";
 import ClientDetails from "../../components/ClientDetails";
 
@@ -34,20 +33,18 @@ function ClientList() {
 
   return (
     <div>
-      <Container className="mx-0 w-100 vh-100 my-2">
-        <Row>
+      <div className="mx-0 w-100 vh-100 my-2 container">
+        <div className="row">
           <h1 className="text-center">Web Scraper</h1>
-        </Row>
-        <Row className="my-2">
-          {
-            clientsList.map((client: {[key: string]: string}) => (
-              <Col key={client.uuid}>
-                <ClientDetails client={client} />
-              </Col>
-            ))
-          }
-        </Row>
-      </Container>
+        </div>
+        <div className="row my-2 gy-4 pb-4">
+          {clientsList.map((client: { [key: string]: string }) => (
+            <div className="fluid col-xs-6 col-md-4" key={client.uuid}>
+              <ClientDetails client={client} />
+            </div>
+          ))}
+        </div>
+      </div>
       {isPending && <Loader />}
     </div>
   );
