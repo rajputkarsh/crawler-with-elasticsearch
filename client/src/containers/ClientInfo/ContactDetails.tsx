@@ -4,8 +4,8 @@ interface ContactDetailsProps {
 
 function ContactDetails({ client }: ContactDetailsProps) {
   return (
-    <div className="row px-5">
-      <table className="table table-striped">
+    <div className="row details">
+      <table className="table table-striped table-hover">
         <thead>
           <tr>
             <th colSpan={2} className="text-center">

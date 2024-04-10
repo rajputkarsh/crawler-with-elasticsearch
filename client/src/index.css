@@ -43,3 +43,9 @@ body {
     height: 5rem;
   }
 }
+
+@media (min-width: 577px) {
+  .details {
+    padding-inline: 8rem;
+  }
+}
