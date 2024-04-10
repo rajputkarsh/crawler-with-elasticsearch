@@ -1,6 +1,5 @@
 import { useTransition } from "react";
 import Loader from "../Loader";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { AppStore } from "../../redux/store";
 import { deleteClient } from "../../redux/store/clients.slice";
@@ -13,7 +12,6 @@ interface DeleteClientProps {
 
 function DeleteClient({ id, handleClose }: DeleteClientProps) {
   const dispatch = useDispatch<AppStore>();
-  const navigate = useNavigate();
   const [isPending, startTransition] = useTransition();
   const handleDelete = () => {
     startTransition(() => {
@@ -22,7 +20,7 @@ function DeleteClient({ id, handleClose }: DeleteClientProps) {
           if (resp?.payload?.status == 200) {
             toast("Client Deleted");
             setTimeout(() => {
-              navigate("/");
+              window.location.href = "/";
             }, 1000);
           } else {
             toast("Something went wrong");

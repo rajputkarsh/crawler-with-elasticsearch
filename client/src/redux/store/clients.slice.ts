@@ -111,7 +111,12 @@ const initialData: IClientSlice = {
 export const clientSlice = createSlice({
   name: "client",
   initialState: initialData,
-  reducers: {},
+  reducers: {
+    incrementPageNumber: (state) => {
+      state.data.page = state.data.page + 1
+      return state;
+    }
+  },
   extraReducers: (
     builders: ActionReducerMapBuilder<{
       data: IClientSliceData;
@@ -188,6 +193,14 @@ export const getPageLimit = createSelector<
   (clientState: IClientSlice) => clientState?.data?.limit || 25
 );
 
+export const getTotalCount = createSelector<
+  [(state: AppState) => IClientSlice],
+  number
+>(
+  [selectClientRootState],
+  (clientState: IClientSlice) => clientState?.data?.count
+);
+
 export const getClients = createSelector<
   [(state: AppState) => IClientSlice],
   Array<{ [key: string]: any }>
@@ -202,5 +215,7 @@ export const getClientById = (uuid: string | undefined) =>
     (clientState: IClientSlice) =>
       (clientState?.data?.data || []).find((client) => client?.uuid === uuid) || {}
   );
+
+  export const { incrementPageNumber } = clientSlice.actions;
 
 export default clientSlice.reducer;

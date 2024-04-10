@@ -6,6 +6,8 @@ import {
   getClients,
   getPageLimit,
   getPageNumber,
+  getTotalCount,
+  incrementPageNumber,
 } from "../../redux/store/clients.slice";
 import Loader from "../../components/Loader";
 import ClientDetails from "../../components/ClientDetails";
@@ -19,6 +21,7 @@ function ClientList() {
   const [showDialog, setShowDialog] = useState<boolean>(false);
 
   const pageNumber = useSelector<AppState, number>(getPageNumber);
+  const totalCount = useSelector<AppState, number>(getTotalCount);
   const pageLimit = useSelector<AppState, number>(getPageLimit);
   const clientsList = useSelector<AppState, Array<{[key: string]: string}>>(getClients);
 
@@ -29,6 +32,10 @@ function ClientList() {
   const closeDialog = () => {
     setShowDialog(false);
   };
+
+  const handleLoadMore = () => {
+    dispatch(incrementPageNumber());
+  }
 
   const fetchClients = () => {
     startTransition(() => {
@@ -64,6 +71,11 @@ function ClientList() {
           </div>
         ))}
       </div>
+      {clientsList.length < totalCount && (
+        <div className="row py-4 justify-content-center">
+          <button onClick={() => {handleLoadMore();}} className="w-auto btn btn-warning px-4"> Load More</button>
+        </div>
+      )}
       {isPending && <Loader />}
       {showDialog && (
         <Dialog
