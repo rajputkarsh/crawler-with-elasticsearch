@@ -135,9 +135,6 @@ class ElasticSearch {
         },
       });
 
-      console.log(`term -- `, term);
-      console.log(`response -- `, response);
-
       const results = response.hits.hits;
       const startIndex = (page - 1) * limit;
       const endIndex = startIndex + limit;
