@@ -16,7 +16,7 @@ model Clients {
   companyCategory     String
   companySubCategory  String
   companyClass        String
-  cin                 String
+  cin                 String @unique
   pin                 String
   state               String
   address             String @db.Text
